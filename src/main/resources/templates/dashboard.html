@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <img src="https://via.placeholder.com/100" class="rounded-circle" alt="Foto de perfil">
+                        </div>
+                        <h5 class="card-title" th:if="${nombre}">
+                            <span th:text="${nombre}">Nombre</span> 
+                            <span th:text="${apellido}">Apellido</span>
+                        </h5>
+                        <p class="card-text text-muted" th:text="${email}">email@ejemplo.com</p>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a href="/perfil" class="btn btn-outline-primary btn-sm">Ver perfil</a>
+                            <button class="btn btn-outline-info btn-sm" onclick="checkSessionInfo()">Estado de sesión</button>
+                            <a href="/logout" class="btn btn-outline-danger btn-sm">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navegación -->
+                <div class="card mt-3">
+                    <div class="card-header">Navegación</div>
+                    <div class="list-group list-group-flush">
+                        <a href="/dashboard" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-house-door me-2"></i>Inicio
+                        </a>
+                        <a href="/red" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people me-2"></i>Mi red
+                        </a>
+                        <a href="/empleos" class="list-group-item list-group-item-action">
+                            <i class="bi bi-briefcase me-2"></i>Empleos
+                        </a>
+                        <a href="/mensajes" class="list-group-item list-group-item-action">
+                            <i class="bi bi-chat-dots me-2"></i>Mensajes
+                        </a>
+                        <a href="/notificaciones" class="list-group-item list-group-item-action">
+                            <i class="bi bi-bell me-2"></i>Notificaciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenido principal -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4>¡Bienvenido/a de vuelta!</h4>
+                        <p>Mantente al día con las últimas actualizaciones de tu red profesional.</p>
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Sesión iniciada correctamente. Tu autenticación está funcionando.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Área de información de sesión -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información de autenticación</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Email:</strong>
+                                <p th:text="${email}">email@ejemplo.com</p>
+                            </div>
+                            <div class="col-md-6" th:if="${nombre}">
+                                <strong>Nombre completo:</strong>
+                                <p><span th:text="${nombre}">Nombre</span> <span th:text="${apellido}">Apellido</span></p>
+                            </div>
+                        </div>
+                        <div id="sessionInfoContainer" class="mt-3" style="display: none;">
+                            <h6>Detalles de sesión:</h6>
+                            <pre id="sessionInfoContent" class="bg-light p-3 rounded"></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Post de ejemplo -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Crear publicación
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control mb-3" placeholder="¿Qué está pasando en tu mundo profesional?"></textarea>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button class="btn btn-outline-secondary btn-sm me-2">
+                                    <i class="bi bi-image"></i> Foto
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-file-text"></i> Documento
+                                </button>
+                            </div>
+                            <button class="btn btn-primary">Publicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar derecho -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">Noticias del sector</div>
+                    <div class="card-body">
+                        <p class="card-text">Mantente informado sobre las últimas tendencias en tu industria.</p>
+                        <small class="text-muted">Próximamente...</small>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">Personas que podrías conocer</div>
+                    <div class="card-body">
+                        <p class="card-text">Amplía tu red profesional conectando con colegas.</p>
+                        <small class="text-muted">Próximamente...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    
+    <script>
+        function checkSessionInfo() {
+            fetch('/api/diagnostic/session-info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sessionInfoContent').textContent = JSON.stringify(data, null, 2);
+                    document.getElementById('sessionInfoContainer').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('sessionInfoContent').textContent = 'Error al obtener información de sesión';
+                    document.getElementById('sessionInfoContainer').style.display = 'block';
+                });
+        }
+        
+        // Auto-check session info on page load for debugging
+        window.addEventListener('load', function() {
+            console.log('Dashboard cargado. Usuario autenticado.');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,176 @@
+/* Custom styles for Red Profesional */
+
+:root {
+    --primary-color: #0a66c2;
+    --secondary-color: #5f6368;
+    --success-color: #057642;
+    --danger-color: #cc0000;
+    --warning-color: #f5c400;
+    --info-color: #0073b1;
+    --light-color: #f3f2ef;
+    --dark-color: #000000;
+}
+
+/* Override Bootstrap primary color */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #004182;
+    border-color: #004182;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Navbar styles */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    text-align: center;
+    padding: 0.5rem 1rem;
+}
+
+.navbar .nav-link:hover {
+    color: white !important;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+
+.navbar .nav-link span {
+    font-size: 0.75rem;
+}
+
+/* Search bar in navbar */
+.navbar .input-group {
+    width: 100%;
+}
+
+.navbar .form-control {
+    background-color: #e1e9ee;
+    border: none;
+}
+
+.navbar .input-group-text {
+    background-color: #e1e9ee;
+    border: none;
+}
+
+/* Card styles */
+.card {
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+/* Profile image styles */
+.rounded-circle {
+    border: 2px solid white;
+}
+
+/* Hero section */
+.hero-section {
+    background-color: #f3f2ef;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Features section */
+.features-section {
+    background-color: var(--light-color);
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(10, 102, 194, 0.25);
+}
+
+/* Password strength indicator */
+.progress {
+    background-color: #e9ecef;
+}
+
+/* Footer styles */
+footer {
+    border-top: 1px solid #e0e0e0;
+}
+
+footer a:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Utility classes */
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar .nav-link {
+        text-align: left;
+    }
+    
+    .navbar .nav-link span {
+        display: inline !important;
+        margin-left: 0.5rem;
+    }
+    
+    .hero-section {
+        text-align: center;
+    }
+    
+    .hero-section .col-lg-6:first-child {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Animation for alerts */
+.alert {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Loading spinner overlay */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+} 

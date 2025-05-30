@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Autenticación</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 3px; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico de Autenticación - Red Social</h1>
+        
+        <div class="section">
+            <h3>📊 Ver Todos los Usuarios</h3>
+            <button onclick="getAllUsers()">Cargar Usuarios</button>
+            <div id="usersResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h3>👤 Buscar Usuario por Email</h3>
+            <div class="form-group">
+                <label for="searchEmail">Email:</label>
+                <input type="email" id="searchEmail" placeholder="usuario@ejemplo.com">
+            </div>
+            <button onclick="searchUser()">Buscar Usuario</button>
+            <div id="searchResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h3>🔑 Verificar Contraseña</h3>
+            <div class="form-group">
+                <label for="verifyEmail">Email:</label>
+                <input type="email" id="verifyEmail" placeholder="usuario@ejemplo.com">
+            </div>
+            <div class="form-group">
+                <label for="verifyPassword">Contraseña:</label>
+                <input type="password" id="verifyPassword" placeholder="Contraseña">
+            </div>
+            <button onclick="verifyPassword()">Verificar Contraseña</button>
+            <div id="verifyResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h3>👑 Ver Roles Disponibles</h3>
+            <button onclick="getRoles()">Cargar Roles</button>
+            <div id="rolesResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080/api/diagnostic';
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                throw new Error(`Error de red: ${error.message}`);
+            }
+        }
+
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${isError ? 'error' : 'success'}`;
+            element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function getAllUsers() {
+            try {
+                const data = await makeRequest(`${BASE_URL}/users`);
+                showResult('usersResult', data);
+            } catch (error) {
+                showResult('usersResult', { error: error.message }, true);
+            }
+        }
+
+        async function searchUser() {
+            const email = document.getElementById('searchEmail').value;
+            if (!email) {
+                showResult('searchResult', { error: 'Por favor ingresa un email' }, true);
+                return;
+            }
+
+            try {
+                const data = await makeRequest(`${BASE_URL}/user/${encodeURIComponent(email)}`);
+                showResult('searchResult', data);
+            } catch (error) {
+                showResult('searchResult', { error: error.message }, true);
+            }
+        }
+
+        async function verifyPassword() {
+            const email = document.getElementById('verifyEmail').value;
+            const password = document.getElementById('verifyPassword').value;
+            
+            if (!email || !password) {
+                showResult('verifyResult', { error: 'Por favor ingresa email y contraseña' }, true);
+                return;
+            }
+
+            try {
+                const data = await makeRequest(`${BASE_URL}/verify-password`, {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                showResult('verifyResult', data);
+            } catch (error) {
+                showResult('verifyResult', { error: error.message }, true);
+            }
+        }
+
+        async function getRoles() {
+            try {
+                const data = await makeRequest(`${BASE_URL}/roles`);
+                showResult('rolesResult', data);
+            } catch (error) {
+                showResult('rolesResult', { error: error.message }, true);
+            }
+        }
+
+        // Auto-cargar usuarios al cargar la página
+        window.onload = function() {
+            setTimeout(getAllUsers, 1000); // Esperar un segundo para que la app inicie
+        };
+    </script>
+</body>
+</html> 

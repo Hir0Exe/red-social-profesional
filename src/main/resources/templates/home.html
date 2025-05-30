@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    
+    <!-- Hero Section for non-authenticated users -->
+    <section class="hero-section py-5" sec:authorize="!isAuthenticated()">
+        <div class="container">
+            <div class="row align-items-center min-vh-50">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Bienvenido a tu comunidad profesional</h1>
+                    <p class="lead mb-4">
+                        Conecta con profesionales de todo el mundo, encuentra oportunidades laborales 
+                        y desarrolla tu carrera profesional.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a th:href="@{/registro}" class="btn btn-primary btn-lg">Únete ahora</a>
+                        <a th:href="@{/login}" class="btn btn-outline-primary btn-lg">Iniciar sesión</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://via.placeholder.com/600x400" class="img-fluid rounded shadow" alt="Profesionales">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section py-5 bg-light" sec:authorize="!isAuthenticated()">
+        <div class="container">
+            <h2 class="text-center mb-5">¿Por qué unirse a Red Profesional?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Conecta</h4>
+                        <p>Amplía tu red profesional conectando con colegas, mentores y líderes de tu industria.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-briefcase-fill text-primary" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Encuentra oportunidades</h4>
+                        <p>Descubre empleos que se ajusten a tu perfil y recibe alertas personalizadas.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-graph-up-arrow text-primary" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Crece profesionalmente</h4>
+                        <p>Comparte conocimientos, aprende de otros y mantente actualizado en tu campo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section py-5" sec:authorize="!isAuthenticated()">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h2 class="display-4 text-primary fw-bold">1M+</h2>
+                    <p class="lead">Profesionales</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="display-4 text-primary fw-bold">50K+</h2>
+                    <p class="lead">Empresas</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="display-4 text-primary fw-bold">100K+</h2>
+                    <p class="lead">Ofertas de empleo</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="display-4 text-primary fw-bold">200+</h2>
+                    <p class="lead">Países</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Dashboard for authenticated users -->
+    <div class="container mt-4" sec:authorize="isAuthenticated()">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/80" class="rounded-circle mb-3" alt="Profile">
+                        <h6 th:text="${username}">Usuario</h6>
+                        <p class="text-muted small">Tu titular profesional</p>
+                        <hr>
+                        <a href="#" class="text-decoration-none">Ver perfil completo</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Comparte una actualización</h5>
+                        <textarea class="form-control mb-3" rows="3" placeholder="¿En qué estás trabajando?"></textarea>
+                        <button class="btn btn-primary">Publicar</button>
+                    </div>
+                </div>
+                
+                <!-- Feed placeholder -->
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-newspaper text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">Tu feed aparecerá aquí</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Noticias y tendencias</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="small text-muted">Las últimas noticias de tu industria aparecerán aquí</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html> 
