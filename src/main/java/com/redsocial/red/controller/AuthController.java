@@ -36,11 +36,15 @@ public class AuthController {
     @PostMapping("/registro")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegistroRequest registroRequest) {
         try {
+            System.out.println("Recibida petición de registro para email: " + registroRequest.getEmail());
             String message = authService.registerUser(registroRequest);
             Map<String, String> response = new HashMap<>();
             response.put("message", message);
+            System.out.println("Registro exitoso para email: " + registroRequest.getEmail());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
+            System.err.println(
+                    "Error en registro para email: " + registroRequest.getEmail() + " - Error: " + e.getMessage());
             Map<String, String> error = new HashMap<>();
             error.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(error);

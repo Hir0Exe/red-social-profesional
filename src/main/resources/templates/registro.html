@@ -198,8 +198,10 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify(registroData)
+                    body: JSON.stringify(registroData),
+                    credentials: 'same-origin'
                 });
                 
                 if (response.ok) {
@@ -209,8 +211,16 @@
                         window.location.href = '/login';
                     }, 3000);
                 } else {
-                    const error = await response.json();
-                    showAlert(error.message || 'Error al crear la cuenta', 'danger');
+                    const errorText = await response.text();
+                    let errorMessage;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage = errorJson.message || errorJson.error || 'Error al crear la cuenta';
+                    } catch (e) {
+                        errorMessage = 'Error al crear la cuenta: ' + response.status;
+                        console.error('Error response:', errorText);
+                    }
+                    showAlert(errorMessage, 'danger');
                 }
             } catch (error) {
                 showAlert('Error al conectar con el servidor', 'danger');
