@@ -11,7 +11,18 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <img src="https://via.placeholder.com/100" class="rounded-circle" alt="Foto de perfil">
+                            <!-- Foto de perfil si está disponible -->
+                            <div th:if="${perfil != null and perfil.fotoUrl != null and !#strings.isEmpty(perfil.fotoUrl)}">
+                                <img th:src="${perfil.fotoUrl}" class="rounded-circle mx-auto" 
+                                     style="width: 100px; height: 100px; object-fit: cover;" 
+                                     th:alt="'Foto de ' + ${perfil.nombreCompleto}">
+                            </div>
+                            <!-- Icono placeholder si no hay foto -->
+                            <div th:unless="${perfil != null and perfil.fotoUrl != null and !#strings.isEmpty(perfil.fotoUrl)}" 
+                                 class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto" 
+                                 style="width: 100px; height: 100px;">
+                                <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                            </div>
                         </div>
                         <h5 class="card-title" th:if="${nombre}">
                             <span th:text="${nombre}">Nombre</span> 
@@ -20,16 +31,24 @@
                         <p class="card-text text-muted" th:text="${email}">email@ejemplo.com</p>
                         <hr>
                         <div class="d-grid gap-2">
-                            <a href="/perfil" class="btn btn-outline-primary btn-sm">Ver perfil</a>
-                            <button class="btn btn-outline-info btn-sm" onclick="checkSessionInfo()">Estado de sesión</button>
-                            <a href="/logout" class="btn btn-outline-danger btn-sm">Cerrar sesión</a>
+                            <a href="/perfil" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-person-circle me-1"></i>Ver perfil
+                            </a>
+                            <button class="btn btn-outline-info btn-sm" onclick="checkSessionInfo()">
+                                <i class="bi bi-info-circle me-1"></i>Estado de sesión
+                            </button>
+                            <a href="/logout" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
+                            </a>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Navegación -->
                 <div class="card mt-3">
-                    <div class="card-header">Navegación</div>
+                    <div class="card-header">
+                        <i class="bi bi-compass me-2"></i>Navegación
+                    </div>
                     <div class="list-group list-group-flush">
                         <a href="/dashboard" class="list-group-item list-group-item-action active">
                             <i class="bi bi-house-door me-2"></i>Inicio
@@ -66,21 +85,23 @@
                 <!-- Área de información de sesión -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0">Información de autenticación</h5>
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>Información de autenticación
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <strong>Email:</strong>
+                                <strong><i class="bi bi-envelope me-1"></i>Email:</strong>
                                 <p th:text="${email}">email@ejemplo.com</p>
                             </div>
                             <div class="col-md-6" th:if="${nombre}">
-                                <strong>Nombre completo:</strong>
+                                <strong><i class="bi bi-person me-1"></i>Nombre completo:</strong>
                                 <p><span th:text="${nombre}">Nombre</span> <span th:text="${apellido}">Apellido</span></p>
                             </div>
                         </div>
                         <div id="sessionInfoContainer" class="mt-3" style="display: none;">
-                            <h6>Detalles de sesión:</h6>
+                            <h6><i class="bi bi-gear me-1"></i>Detalles de sesión:</h6>
                             <pre id="sessionInfoContent" class="bg-light p-3 rounded"></pre>
                         </div>
                     </div>
@@ -89,7 +110,7 @@
                 <!-- Post de ejemplo -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        Crear publicación
+                        <i class="bi bi-plus-circle me-2"></i>Crear publicación
                     </div>
                     <div class="card-body">
                         <textarea class="form-control mb-3" placeholder="¿Qué está pasando en tu mundo profesional?"></textarea>
@@ -102,7 +123,9 @@
                                     <i class="bi bi-file-text"></i> Documento
                                 </button>
                             </div>
-                            <button class="btn btn-primary">Publicar</button>
+                            <button class="btn btn-primary">
+                                <i class="bi bi-send me-1"></i>Publicar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -111,18 +134,26 @@
             <!-- Sidebar derecho -->
             <div class="col-md-3">
                 <div class="card">
-                    <div class="card-header">Noticias del sector</div>
+                    <div class="card-header">
+                        <i class="bi bi-newspaper me-2"></i>Noticias del sector
+                    </div>
                     <div class="card-body">
                         <p class="card-text">Mantente informado sobre las últimas tendencias en tu industria.</p>
-                        <small class="text-muted">Próximamente...</small>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>Próximamente...
+                        </small>
                     </div>
                 </div>
                 
                 <div class="card mt-3">
-                    <div class="card-header">Personas que podrías conocer</div>
+                    <div class="card-header">
+                        <i class="bi bi-people me-2"></i>Personas que podrías conocer
+                    </div>
                     <div class="card-body">
                         <p class="card-text">Amplía tu red profesional conectando con colegas.</p>
-                        <small class="text-muted">Próximamente...</small>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>Próximamente...
+                        </small>
                     </div>
                 </div>
             </div>
@@ -130,6 +161,7 @@
     </div>
     
     <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
     
     <script>
         function checkSessionInfo() {

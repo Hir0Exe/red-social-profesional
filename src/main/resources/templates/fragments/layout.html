@@ -27,17 +27,22 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Search bar -->
-                <form class="d-flex mx-auto" style="max-width: 400px;">
+                <form class="d-flex mx-auto" style="max-width: 400px;" action="/buscar" method="GET">
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input class="form-control border-start-0" type="search" placeholder="Buscar empleos, personas, empresas..." aria-label="Search">
+                        <input class="form-control border-start-0" type="search" name="q" 
+                               placeholder="Buscar empleos, personas, empresas..." 
+                               aria-label="Search">
+                        <button class="btn btn-outline-primary" type="button" onclick="abrirBusquedaAvanzada()">
+                            <i class="bi bi-funnel"></i>
+                        </button>
                     </div>
                 </form>
                 
                 <!-- Navigation items -->
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/feed}">
+                        <a class="nav-link" th:href="@{/dashboard}">
                             <i class="bi bi-house-door-fill fs-5"></i>
                             <span class="d-block small">Inicio</span>
                         </a>
@@ -70,16 +75,24 @@
                     <!-- User dropdown -->
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <img src="https://via.placeholder.com/32" class="rounded-circle me-1" alt="User">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-1" style="width: 32px; height: 32px;">
+                                <i class="bi bi-person-fill text-primary"></i>
+                            </div>
                             <span class="d-block small">Yo</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" th:href="@{/profile}">Ver perfil</a></li>
-                            <li><a class="dropdown-item" th:href="@{/settings}">Configuración</a></li>
+                            <li><a class="dropdown-item" th:href="@{/perfil}">
+                                <i class="bi bi-person-circle me-2"></i>Ver perfil
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/settings}">
+                                <i class="bi bi-gear me-2"></i>Configuración
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form th:action="@{/logout}" method="post">
-                                    <button class="dropdown-item" type="submit">Cerrar sesión</button>
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                    </button>
                                 </form>
                             </li>
                         </ul>

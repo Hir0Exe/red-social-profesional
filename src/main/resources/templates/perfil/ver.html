@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Perfil Profesional')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Alertas -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}">Mensaje de éxito</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Mensaje de error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Indicador de vista previa -->
+        <div th:if="${esPreview}" class="alert alert-info" role="alert">
+            <i class="bi bi-eye me-2"></i>
+            <strong>Vista previa:</strong> Así es como otros usuarios ven tu perfil.
+            <a href="/perfil/editar" class="btn btn-outline-primary btn-sm ms-3">
+                <i class="bi bi-pencil me-1"></i>Volver a editar
+            </a>
+        </div>
+
+        <div class="row">
+            <!-- Columna principal del perfil -->
+            <div class="col-lg-8">
+                <!-- Encabezado del perfil -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <!-- Foto de perfil -->
+                                <div th:if="${perfil.fotoUrl != null and !#strings.isEmpty(perfil.fotoUrl)}" class="position-relative">
+                                    <img th:src="${perfil.fotoUrl}" class="rounded-circle" 
+                                         style="width: 120px; height: 120px; object-fit: cover;" 
+                                         th:alt="'Foto de ' + ${perfil.nombreCompleto}">
+                                </div>
+                                <div th:unless="${perfil.fotoUrl != null and !#strings.isEmpty(perfil.fotoUrl)}" class="rounded-circle bg-primary d-flex align-items-center justify-content-center" 
+                                     style="width: 120px; height: 120px;">
+                                    <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h1 class="mb-1" th:text="${perfil.nombreCompleto}">Nombre Completo</h1>
+                                <p class="lead text-muted mb-2" th:text="${perfil.titular ?: 'Profesional'}">Titular profesional</p>
+                                
+                                <!-- Ubicación -->
+                                <div th:if="${perfil.ubicacion != null and !#strings.isEmpty(perfil.ubicacion)}" class="mb-2">
+                                    <i class="bi bi-geo-alt text-muted me-2"></i>
+                                    <span th:text="${perfil.ubicacion}">Ubicación</span>
+                                </div>
+                                
+                                <!-- Sector -->
+                                <div th:if="${perfil.sector != null and !#strings.isEmpty(perfil.sector)}" class="mb-2">
+                                    <i class="bi bi-briefcase text-muted me-2"></i>
+                                    <span th:text="${perfil.sector}">Sector</span>
+                                </div>
+                                
+                                <!-- Sitio web -->
+                                <div th:if="${perfil.sitioWeb != null and !#strings.isEmpty(perfil.sitioWeb)}" class="mb-2">
+                                    <i class="bi bi-globe text-muted me-2"></i>
+                                    <a th:href="${perfil.sitioWeb}" target="_blank" class="text-decoration-none">
+                                        <span th:text="${perfil.sitioWeb}">sitio-web.com</span>
+                                        <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+                                </div>
+
+                                <!-- Estadísticas -->
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye me-1"></i>
+                                        <span th:text="${perfil.vistasPerfil ?: 0}">0</span> visualizaciones del perfil
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción (solo para propietario) -->
+                        <div th:if="${perfil.esPropietario}" class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="/perfil/editar" class="btn btn-primary">
+                                        <i class="bi bi-pencil me-1"></i>Editar perfil
+                                    </a>
+                                    <a href="/perfil/preview" class="btn btn-outline-secondary">
+                                        <i class="bi bi-eye me-1"></i>Vista previa
+                                    </a>
+                                    <button class="btn btn-outline-info" onclick="copiarUrlPerfil()">
+                                        <i class="bi bi-share me-1"></i>Compartir perfil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extracto/Acerca de -->
+                <div th:if="${perfil.extracto != null and !#strings.isEmpty(perfil.extracto)}" class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-lines-fill me-2"></i>Acerca de
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${perfil.extracto}" style="white-space: pre-wrap;">
+                            Extracto profesional del usuario...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Placeholder para secciones futuras -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-briefcase me-2"></i>Experiencia Laboral
+                        </h5>
+                    </div>
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-briefcase text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">
+                            <span th:if="${perfil.esPropietario}">
+                                Agrega tu experiencia laboral para que otros profesionales conozcan tu trayectoria.
+                            </span>
+                            <span th:unless="${perfil.esPropietario}">
+                                No hay experiencia laboral disponible.
+                            </span>
+                        </p>
+                        <button th:if="${perfil.esPropietario}" class="btn btn-outline-primary" disabled>
+                            <i class="bi bi-plus me-1"></i>Próximamente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-mortarboard me-2"></i>Formación Académica
+                        </h5>
+                    </div>
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-mortarboard text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">
+                            <span th:if="${perfil.esPropietario}">
+                                Comparte tu formación académica y certificaciones.
+                            </span>
+                            <span th:unless="${perfil.esPropietario}">
+                                No hay formación académica disponible.
+                            </span>
+                        </p>
+                        <button th:if="${perfil.esPropietario}" class="btn btn-outline-primary" disabled>
+                            <i class="bi bi-plus me-1"></i>Próximamente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar derecho -->
+            <div class="col-lg-4">
+                <!-- Información personal -->
+                <div th:if="${perfil.fechaNacimiento != null}" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-calendar-heart me-2"></i>Información personal
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Fecha de nacimiento y edad -->
+                        <div class="mb-3">
+                            <strong><i class="bi bi-cake2 me-2"></i>Fecha de nacimiento:</strong><br>
+                            <span th:text="${#temporals.format(perfil.fechaNacimiento, 'dd/MM/yyyy')}">01/01/1990</span>
+                        </div>
+                        <div class="mb-0">
+                            <strong><i class="bi bi-person-check me-2"></i>Edad:</strong><br>
+                            <span th:id="'edad-' + ${perfil.id}" th:data-fecha-nacimiento="${perfil.fechaNacimiento}">Calculando...</span> años
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-person-lines-fill me-2"></i>Información de contacto
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Email (solo visible para el propietario) -->
+                        <div th:if="${perfil.esPropietario and perfil.email != null and !#strings.isEmpty(perfil.email)}" class="mb-3">
+                            <strong><i class="bi bi-envelope me-2"></i>Email:</strong><br>
+                            <a th:href="'mailto:' + ${perfil.email}" th:text="${perfil.email}">email@ejemplo.com</a>
+                        </div>
+                        
+                        <!-- Teléfono -->
+                        <div th:if="${perfil.telefono != null and !#strings.isEmpty(perfil.telefono)}" class="mb-3">
+                            <strong><i class="bi bi-telephone me-2"></i>Teléfono:</strong><br>
+                            <span th:text="${perfil.telefono}">+1234567890</span>
+                        </div>
+                        
+                        <!-- Ubicación -->
+                        <div th:if="${perfil.ubicacion != null and !#strings.isEmpty(perfil.ubicacion)}" class="mb-3">
+                            <strong><i class="bi bi-geo-alt me-2"></i>Ubicación:</strong><br>
+                            <span th:text="${perfil.ubicacion}">Ciudad, País</span>
+                        </div>
+
+                        <div th:if="${(perfil.telefono == null or #strings.isEmpty(perfil.telefono)) and (perfil.ubicacion == null or #strings.isEmpty(perfil.ubicacion)) and !(perfil.esPropietario and perfil.email != null and !#strings.isEmpty(perfil.email))}" 
+                             class="text-muted text-center py-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            No hay información de contacto disponible.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL del perfil (solo para propietario) -->
+                <div th:if="${perfil.esPropietario and perfil.urlPerfil != null and !#strings.isEmpty(perfil.urlPerfil)}" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-link-45deg me-2"></i>URL de tu perfil
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" readonly 
+                                   th:value="${'https://redprofesional.com/perfil/u/' + perfil.urlPerfil}"
+                                   id="urlPerfil">
+                            <button class="btn btn-outline-secondary" type="button" onclick="copiarUrlPerfil()">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de privacidad (solo para propietario) -->
+                <div th:if="${perfil.esPropietario}" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>Privacidad
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>Visibilidad del perfil:</strong>
+                        </div>
+                        <span class="badge" 
+                              th:classappend="${perfil.visibilidadPerfil == 'PUBLICO'} ? 'bg-success' : 
+                                             (${perfil.visibilidadPerfil == 'CONEXIONES'} ? 'bg-warning' : 'bg-secondary')"
+                              th:text="${perfil.visibilidadPerfil == 'PUBLICO'} ? 'Público' : 
+                                       (${perfil.visibilidadPerfil == 'CONEXIONES'} ? 'Solo conexiones' : 'Privado')">
+                            Público
+                        </span>
+                        <p class="small text-muted mt-2 mb-0">
+                            <span th:if="${perfil.visibilidadPerfil == 'PUBLICO'}">
+                                Tu perfil es visible para todos los usuarios.
+                            </span>
+                            <span th:if="${perfil.visibilidadPerfil == 'CONEXIONES'}">
+                                Solo tus conexiones pueden ver tu perfil.
+                            </span>
+                            <span th:if="${perfil.visibilidadPerfil == 'PRIVADO'}">
+                                Tu perfil no es visible para otros usuarios.
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+        // Función para calcular edad basada en las mejores prácticas de cálculo
+        function calcularEdad(fechaNacimiento) {
+            const hoy = new Date();
+            const nacimiento = new Date(fechaNacimiento);
+            
+            let edad = hoy.getFullYear() - nacimiento.getFullYear();
+            const mesActual = hoy.getMonth();
+            const diaActual = hoy.getDate();
+            const mesNacimiento = nacimiento.getMonth();
+            const diaNacimiento = nacimiento.getDate();
+            
+            // Si no ha llegado el mes del cumpleaños este año, restar 1
+            if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+                edad--;
+            }
+            
+            return edad;
+        }
+
+        // Calcular y mostrar edad al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const elementoEdad = document.querySelector('[data-fecha-nacimiento]');
+            if (elementoEdad) {
+                const fechaNacimiento = elementoEdad.getAttribute('data-fecha-nacimiento');
+                if (fechaNacimiento) {
+                    const edad = calcularEdad(fechaNacimiento);
+                    elementoEdad.textContent = edad;
+                }
+            }
+        });
+
+        function copiarUrlPerfil() {
+            const urlInput = document.getElementById('urlPerfil');
+            if (urlInput) {
+                urlInput.select();
+                urlInput.setSelectionRange(0, 99999); // Para móviles
+                
+                try {
+                    document.execCommand('copy');
+                    showToast('URL del perfil copiada al portapapeles', 'success');
+                } catch (err) {
+                    showToast('Error al copiar la URL', 'danger');
+                }
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            // Crear contenedor de toast si no existe
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '1050';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Crear toast
+            const toastId = 'toast-' + Date.now();
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            // Mostrar toast
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            // Limpiar después de ocultar
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+    </script>
+</body>
+</html> 

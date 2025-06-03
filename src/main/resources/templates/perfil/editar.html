@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar Perfil')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Encabezado -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1><i class="bi bi-pencil me-2"></i>Editar Perfil</h1>
+                        <p class="text-muted">Actualiza tu información profesional</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/perfil" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Volver al perfil
+                        </a>
+                        <a href="/perfil/preview" class="btn btn-info">
+                            <i class="bi bi-eye me-1"></i>Vista previa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}">Mensaje de éxito</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Mensaje de error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <form th:action="@{/perfil/actualizar}" th:object="${actualizarPerfilRequest}" method="post">
+            <div class="row">
+                <!-- Columna principal -->
+                <div class="col-lg-8">
+                    <!-- Información básica -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person me-2"></i>Información Básica
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Foto de perfil -->
+                            <div class="row mb-4">
+                                <div class="col-auto">
+                                    <div th:if="${perfil.fotoUrl}" class="position-relative">
+                                        <img th:src="${perfil.fotoUrl}" class="rounded-circle" 
+                                             style="width: 100px; height: 100px; object-fit: cover;" 
+                                             th:alt="'Foto de ' + ${perfil.nombreCompleto}">
+                                    </div>
+                                    <div th:unless="${perfil.fotoUrl}" class="rounded-circle bg-primary d-flex align-items-center justify-content-center" 
+                                         style="width: 100px; height: 100px;">
+                                        <i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label for="fotoUrl" class="form-label">URL de foto de perfil</label>
+                                    <input type="url" class="form-control" th:field="*{fotoUrl}" id="fotoUrl"
+                                           placeholder="https://ejemplo.com/mi-foto.jpg">
+                                    <div class="form-text">
+                                        Ingresa la URL de tu foto de perfil. Recomendamos imágenes cuadradas de al menos 200x200px.
+                                    </div>
+                                    <div th:if="${#fields.hasErrors('fotoUrl')}" class="invalid-feedback d-block">
+                                        <span th:errors="*{fotoUrl}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Titular profesional -->
+                            <div class="mb-3">
+                                <label for="titular" class="form-label">Titular profesional</label>
+                                <input type="text" class="form-control" th:field="*{titular}" id="titular"
+                                       placeholder="ej. Ingeniero de Software Senior en TechCorp">
+                                <div class="form-text">
+                                    Un resumen breve de tu posición y empresa actual
+                                </div>
+                                <div th:if="${#fields.hasErrors('titular')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{titular}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Extracto/Acerca de -->
+                            <div class="mb-3">
+                                <label for="extracto" class="form-label">Acerca de</label>
+                                <textarea class="form-control" th:field="*{extracto}" id="extracto" rows="6"
+                                          placeholder="Cuéntanos sobre tu experiencia, habilidades y objetivos profesionales..."></textarea>
+                                <div class="form-text">
+                                    Describe tu experiencia, habilidades y objetivos profesionales. Máximo 1000 caracteres.
+                                </div>
+                                <div th:if="${#fields.hasErrors('extracto')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{extracto}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de contacto -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person-lines-fill me-2"></i>Información de Contacto
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Ubicación -->
+                                    <div class="mb-3">
+                                        <label for="ubicacion" class="form-label">Ubicación</label>
+                                        <input type="text" class="form-control" th:field="*{ubicacion}" id="ubicacion"
+                                               placeholder="Ciudad, País">
+                                        <div th:if="${#fields.hasErrors('ubicacion')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{ubicacion}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Teléfono -->
+                                    <div class="mb-3">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" th:field="*{telefono}" id="telefono"
+                                               placeholder="+1 234 567 8900">
+                                        <div th:if="${#fields.hasErrors('telefono')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{telefono}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Sector -->
+                                    <div class="mb-3">
+                                        <label for="sector" class="form-label">Sector/Industria</label>
+                                        <input type="text" class="form-control" th:field="*{sector}" id="sector"
+                                               placeholder="ej. Tecnología, Finanzas, Salud">
+                                        <div th:if="${#fields.hasErrors('sector')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{sector}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Sitio web -->
+                                    <div class="mb-3">
+                                        <label for="sitioWeb" class="form-label">Sitio web personal</label>
+                                        <input type="url" class="form-control" th:field="*{sitioWeb}" id="sitioWeb"
+                                               placeholder="https://mi-sitio-web.com">
+                                        <div th:if="${#fields.hasErrors('sitioWeb')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{sitioWeb}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fecha de nacimiento -->
+                            <div class="mb-3">
+                                <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" th:field="*{fechaNacimiento}" id="fechaNacimiento">
+                                <div class="form-text">
+                                    Tu fecha de nacimiento aparecerá en tu perfil junto con tu edad calculada automáticamente
+                                </div>
+                                <div th:if="${#fields.hasErrors('fechaNacimiento')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{fechaNacimiento}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Configuración de privacidad -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-shield-check me-2"></i>Configuración de Privacidad
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="visibilidadPerfil" class="form-label">Visibilidad del perfil</label>
+                                <select class="form-select" th:field="*{visibilidadPerfil}" id="visibilidadPerfil">
+                                    <option value="PUBLICO">Público - Visible para todos</option>
+                                    <option value="CONEXIONES">Solo conexiones</option>
+                                    <option value="PRIVADO">Privado - No visible</option>
+                                </select>
+                                <div class="form-text">
+                                    Controla quién puede ver tu perfil profesional
+                                </div>
+                                <div th:if="${#fields.hasErrors('visibilidadPerfil')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{visibilidadPerfil}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del perfil -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Información del Perfil
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Nombre completo:</strong><br>
+                                <span th:text="${perfil.nombreCompleto}">Nombre Apellido</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Email:</strong><br>
+                                <span th:text="${perfil.email}">email@ejemplo.com</span>
+                            </div>
+                            
+                            <div th:if="${perfil.urlPerfil}" class="mb-3">
+                                <strong>URL del perfil:</strong><br>
+                                <small class="text-muted">
+                                    /perfil/u/<span th:text="${perfil.urlPerfil}">mi-perfil</span>
+                                </small>
+                            </div>
+                            
+                            <div class="mb-0">
+                                <strong>Visualizaciones:</strong><br>
+                                <span th:text="${perfil.vistasPerfil ?: 0}">0</span> vistas
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-1"></i>Guardar cambios
+                                </button>
+                                
+                                <a href="/perfil/preview" class="btn btn-outline-info">
+                                    <i class="bi bi-eye me-1"></i>Vista previa
+                                </a>
+                                
+                                <a href="/perfil" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-1"></i>Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preview de imagen de perfil
+            const fotoUrlInput = document.getElementById('fotoUrl');
+            
+            fotoUrlInput.addEventListener('input', function() {
+                // Aquí podrías agregar lógica para previsualizar la imagen
+                // Por simplicidad, no implementamos esto ahora
+            });
+
+            // Contador de caracteres para el extracto
+            const extractoTextarea = document.getElementById('extracto');
+            if (extractoTextarea) {
+                const maxLength = 1000;
+                
+                // Crear contador si no existe
+                if (!document.getElementById('extractoCounter')) {
+                    const counter = document.createElement('div');
+                    counter.id = 'extractoCounter';
+                    counter.className = 'form-text text-end mt-1';
+                    extractoTextarea.parentNode.appendChild(counter);
+                }
+                
+                const counter = document.getElementById('extractoCounter');
+                
+                function updateCounter() {
+                    const remaining = maxLength - extractoTextarea.value.length;
+                    counter.textContent = `${extractoTextarea.value.length}/${maxLength} caracteres`;
+                    
+                    if (remaining < 0) {
+                        counter.classList.add('text-danger');
+                        counter.classList.remove('text-muted');
+                    } else if (remaining < 100) {
+                        counter.classList.add('text-warning');
+                        counter.classList.remove('text-danger', 'text-muted');
+                    } else {
+                        counter.classList.add('text-muted');
+                        counter.classList.remove('text-danger', 'text-warning');
+                    }
+                }
+                
+                // Actualizar contador al cargar y al escribir
+                updateCounter();
+                extractoTextarea.addEventListener('input', updateCounter);
+            }
+
+            // Validación del formulario
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                // Validaciones adicionales si es necesario
+                const sitioWeb = document.getElementById('sitioWeb').value;
+                if (sitioWeb && !sitioWeb.startsWith('http')) {
+                    e.preventDefault();
+                    alert('El sitio web debe comenzar con http:// o https://');
+                    return false;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
